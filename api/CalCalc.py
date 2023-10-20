@@ -1,49 +1,52 @@
 from flask import Flask, request, jsonify
+import sqlite3
 
-app = Flask(__name)
+app = Flask(__name__)
 
-# Your database (you can replace this with your preferred database setup)
-userData = []
+# Initialize the SQLite database
+conn = sqlite3.connect('data.db')
+cursor = conn.cursor()
 
-# Harris-Benedict equation constants
-MALE_MULTIPLIER = 88.362
-FEMALE_MULTIPLIER = 447.593
-HEIGHT_MULTIPLIER = 3.351
-WEIGHT_MULTIPLIER = 4.799
-AGE_MULTIPLIER = 5.677
+# Create a table to store the data
+cursor.execute('''CREATE TABLE IF NOT EXISTS data (id INTEGER PRIMARY KEY, value TEXT)''')
+conn.commit()
 
-@app.route('/save_data', methods=['POST'])
-def save_data():
-    data = {
-        'age': int(request.form['age']),
-        'weight': float(request.form['weight']),
-        'height': float(request.form['height']),
-        'activity': request.form['activity'],
-        'username': request.form['username'],
-    }
+# Close the database connection when the application is done
+conn.close()
 
-    # Calculate BMR (Basal Metabolic Rate) using the Harris-Benedict equation
-    if request.form['gender'] == 'male':
-        bmr = MALE_MULTIPLIER + WEIGHT_MULTIPLIER * data['weight'] + HEIGHT_MULTIPLIER * data['height'] - AGE_MULTIPLIER * data['age']
-    else:
-        bmr = FEMALE_MULTIPLIER + WEIGHT_MULTIPLIER * data['weight'] + HEIGHT_MULTIPLIER * data['height'] - AGE_MULTIPLIER * data['age']
+@app.route('/store', methods=['POST'])
+def store_data():
+    try:
+        data = request.get_json()
+        value = data['value']
 
-    # Adjust BMR based on activity level
-    activity_multipliers = {
-        'sedentary': 1.2,
-        'lightly_active': 1.375,
-        'moderately_active': 1.55,
-        'very_active': 1.725
-    }
-    calorie_maintenance = bmr * activity_multipliers[data['activity']]
+        conn = sqlite3.connect('data.db')
+        cursor = conn.cursor()
 
-    data['calorie_maintenance'] = calorie_maintenance
+        cursor.execute('INSERT INTO data (value) VALUES (?)', (value,))
+        conn.commit()
+        conn.close()
 
-    # Store the data in your database or any other data storage mechanism
-    userData.append(data)
+        return jsonify({'message': 'Data stored successfully'})
 
-    # Return the data including the calculated calorie maintenance
-    return jsonify(data)
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+@app.route('/retrieve', methods=['GET'])
+def retrieve_data():
+    try:
+        conn = sqlite3.connect('data.db')
+        cursor = conn.cursor()
+
+        cursor.execute('SELECT * FROM data')
+        data = cursor.fetchall()
+        conn.close()
+
+        data_list = [{'id': item[0], 'value': item[1]} for item in data]
+        return jsonify(data_list)
+
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 if __name__ == '__main__':
     app.run(debug=True)

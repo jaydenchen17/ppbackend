@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 
-app = Flask(  name)
+app = Flask(  name  )
 
 # Initialize an empty dictionary to store user data
 user_data = {}

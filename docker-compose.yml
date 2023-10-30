@@ -9,3 +9,4 @@ services:
                         - ./volumes:/volumes
                         - ./instance:/instance
                 restart: unless-stopped
+                network_mode: bridge

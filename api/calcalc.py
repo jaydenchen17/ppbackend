@@ -1,6 +1,9 @@
+joke_api = __name__ ('joke_api', __name__,
+                   url_prefix='/api/jokes')
+
 from flask import Flask, request, jsonify
 
-app = Flask(__name)
+app = Flask(__name__)
 
 @app.route('/store_user_data', methods=['POST'])
 def store_user_data():

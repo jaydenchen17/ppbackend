@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify
 calcalc_api = __name__ ('calcalc_api', __name__,
                    url_prefix='/api/calcalc')
 
-api = API(calcalc_api)
+api = Api(calcalc_api)
 
 
 app = Flask(__name__)

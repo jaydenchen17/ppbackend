@@ -1,40 +1,61 @@
 import json
+import random
 
-class UserData:
-    def __init__(self, username, age, weight, height, activity, gender, calorie_maintenance, meal_plan, meal_plan_number):
-        self.username = username
-        self.age = age
-        self.weight = weight
-        self.height = height
-        self.activity = activity
-        self.gender = gender
-        self.calorie_maintenance = calorie_maintenance
-        self.meal_plan = meal_plan
-        self.meal_plan_number = meal_plan_number
+calorie_data = []
 
-    def to_dict(self):
-        return {
-            "username": self.username,
-            "age": self.age,
-            "weight": self.weight,
-            "height": self.height,
-            "activity": self.activity,
-            "gender": self.gender,
-            "calorie_maintenance": self.calorie_maintenance,
-            "meal_plan": self.meal_plan,
-            "meal_plan_number": self.meal_plan_number
-        }
+# Initialize calorie data
+def initCalories():
+    # Add initial calorie data, if needed
+    pass
 
-    @classmethod
-    def from_dict(cls, data):
-        return cls(
-            data.get("username"),
-            data.get("age"),
-            data.get("weight"),
-            data.get("height"),
-            data.get("activity"),
-            data.get("gender"),
-            data.get("calorie_maintenance"),
-            data.get("meal_plan"),
-            data.get("meal_plan_number")
-        )
+# Add a new calorie entry
+def addCalorieEntry(calorie_entry):
+    calorie_data.append(calorie_entry)
+    return calorie_entry
+
+# Get all calorie entries
+def getCalorieEntries():
+    return calorie_data
+
+# Get a specific calorie entry by ID
+def getCalorieEntry(calorie_id):
+    if 0 <= calorie_id < len(calorie_data):
+        return calorie_data[calorie_id]
+    else:
+        return None
+
+# Update a calorie entry by ID
+def updateCalorieEntry(calorie_id, updated_entry):
+    if 0 <= calorie_id < len(calorie_data):
+        calorie_data[calorie_id] = updated_entry
+        return updated_entry
+    else:
+        return None
+
+# Delete a calorie entry by ID
+def deleteCalorieEntry(calorie_id):
+    if 0 <= calorie_id < len(calorie_data):
+        deleted_entry = calorie_data.pop(calorie_id)
+        return deleted_entry
+    else:
+        return None
+
+# Test the Calorie Model
+if __name__ == "__main__":
+    initCalories()  # initialize calorie data, if needed
+    
+    # Add a sample calorie entry
+    sample_entry = {
+        "user_id": 1,
+        "date": "2023-11-04",
+        "calories": 500
+    }
+    added_entry = addCalorieEntry(sample_entry)
+    print("Added calorie entry:")
+    print(added_entry)
+    
+    # Get all calorie entries
+    all_entries = getCalorieEntries()
+    print("\nAll calorie entries:")
+    for entry in all_entries:
+        print(entry)

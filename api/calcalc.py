@@ -1,4 +1,39 @@
+from flask import Flask, request, jsonify
+from flask_restful import Api, Resource # used for REST API building
+import requests  # used for testing 
+import random
 
+
+calcalc_api = __name__ ('calcalc_api', __name__,
+                   url_prefix='/api/calcalc')
+
+api = Api(calcalc_api)
+
+
+app = Flask(__name__)
+
+def calculateCalories(user_data):
+    age = user_data['age']
+    weight = user_data['weight']
+    height = user_data['height']
+    activity = user_data['activity']
+    gender = user_data['gender']
+
+    # Define activity level multipliers
+    activity_levels = {
+        'sedentary': 1.2,
+        'lightly_active': 1.375,
+        'moderately_active': 1.55,
+        'very_active': 1.725
+    }
+
+    # Example calorie calculation (Harris-Benedict equation)
+    if gender == 'male':
+        calorie_maintenance = (88.362 + 13.397 * weight + 4.799 * height - 5.677 * age) * activity_levels[activity]
+    else:
+        calorie_maintenance = (447.593 + 9.247 * weight + 3.098 * height - 4.330 * age) * activity_levels[activity]
+
+    return calorie_maintenance
 
 
 class CalCalcAPI(Resource):
